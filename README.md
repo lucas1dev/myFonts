@@ -1,418 +1,341 @@
 # 🎨 Sistema de Visualização de Fontes
 
-Um sistema moderno para visualizar texto com diferentes fontes, construído com React, Vite e Shadcn/ui. Permite carregar fontes dinamicamente da pasta `public/fonts` e aplicar controles de visualização em tempo real.
+Um sistema completo para visualizar texto com diferentes fontes, desenvolvido com React, Vite e Node.js. Suporta fontes da pasta local e fontes do sistema operacional com detecção dinâmica.
 
 ## ✨ Funcionalidades
 
-- **Carregamento dinâmico** de fontes da pasta `public/fonts`
-- **Fontes do sistema** - Carregamento dinâmico com `font-list`
-- **Detecção de OS** - Configurações específicas por sistema operacional
-- **Seleção de fonte** - Escolha entre pasta ou sistema
-- **Controles de visualização**:
-  - Slider de tamanho de fonte (8px - 280px)
-  - Alinhamento de texto (esquerda, centro, direita)
-  - Modo de visualização (grid ou lista)
+### 🎯 **Funcionalidades Principais**
+- **Visualização de texto** com múltiplas fontes simultaneamente
+- **Duas fontes de fontes**: Pasta local e Sistema operacional
+- **Detecção dinâmica** de fontes do sistema (macOS, Windows, Linux)
 - **Interface moderna** com Shadcn/ui e Tailwind CSS
-- **Modo escuro** automático
-- **Responsivo** em todos os dispositivos
-- **Deploy em produção** com PM2
-- **API REST** para listar fontes disponíveis
+- **Responsivo** para desktop e mobile
+
+### 🎛️ **Controles de Visualização**
+- **Tamanho da fonte**: Slider de 8px a 280px
+- **Alinhamento de texto**: Esquerda, Centro, Direita
+- **Modo de visualização**: Grid ou Lista
+- **Peso da fonte**: Para fontes do sistema (normal, bold, 100-900)
+- **Filtro por categoria**: Para fontes do sistema (serif, sans-serif, monospace, etc.)
+
+### 📁 **Fontes da Pasta**
+- Carrega fontes da pasta `public/fonts`
+- Suporta formatos: `.woff2`, `.woff`, `.ttf`, `.otf`
+- Detecção automática de arquivos de fonte
+- Nomes de fonte formatados automaticamente
+
+### 🖥️ **Fontes do Sistema**
+- **macOS**: Usa `system_profiler SPFontsDataType`
+- **Windows**: Usa registro do sistema
+- **Linux**: Usa `fc-list : family`
+- **Categorização automática**: serif, sans-serif, monospace, display, system
+- **Fallback inteligente** se detecção falhar
 
 ## 🚀 Instalação e Configuração
 
 ### Pré-requisitos
+- Node.js v22.14.0 (usando NVM)
+- npm ou yarn
 
-- **Node.js**: 22.14.0+ (gerenciado via NVM)
-- **NVM**: Node Version Manager
-- **PM2**: Para deploy em produção
-
-### Setup Inicial
-
+### Instalação
 ```bash
-# 1. Clonar o repositório
-git clone <seu-repositorio>
+# Clonar o repositório
+git clone <repository-url>
 cd myFonts
 
-# 2. Setup automático (usa NVM e instala dependências)
-npm run setup
+# Usar a versão correta do Node.js
+nvm use
 
-# 3. Verificar se tudo está funcionando
-npm run dev
+# Instalar dependências
+npm install
+
+# Configurar fontes (opcional)
+mkdir -p public/fonts
+# Adicionar arquivos de fonte (.woff2, .ttf, .otf) na pasta public/fonts
 ```
 
 ### Desenvolvimento
-
 ```bash
-# Rodar em desenvolvimento
+# Iniciar servidor de desenvolvimento
 npm run dev
 
-# Build para produção
-npm run build
-
-# Preview local
-npm run preview
+# Acessar aplicação
+open http://localhost:5173
 ```
 
-## 🚀 Deploy em Produção
+### Produção
+```bash
+# Build da aplicação
+npm run build
+
+# Iniciar servidor de produção
+npm run preview
+
+# Acessar aplicação
+open http://localhost:3000
+```
+
+## 🛠️ Deploy em Produção
 
 ### Deploy Automatizado
-
 ```bash
-# Deploy completo (build + PM2)
+# Executar script de deploy
 ./deploy.sh
 ```
 
-### Comandos Manuais
-
+### Deploy Manual
 ```bash
-# Build otimizado
-npm run prod:build
+# Build da aplicação
+npm run build
 
-# Iniciar com PM2
-npm run prod:start
+# Instalar PM2 (se não estiver instalado)
+npm install -g pm2
 
-# Parar aplicação
-npm run prod:stop
+# Iniciar aplicação com PM2
+pm2 start ecosystem.config.cjs
 
-# Reiniciar aplicação
-npm run prod:restart
+# Salvar configuração do PM2
+pm2 save
 
-# Reload zero-downtime
-npm run prod:reload
-
-# Ver logs
-npm run prod:logs
-
-# Monitorar em tempo real
-npm run prod:monit
-
-# Deletar do PM2
-npm run prod:delete
+# Verificar status
+pm2 status
 ```
 
-### Configuração PM2
+### Comandos PM2
+```bash
+# Gerenciar aplicação
+pm2 start myfonts-app    # Iniciar
+pm2 stop myfonts-app     # Parar
+pm2 restart myfonts-app  # Reiniciar
+pm2 delete myfonts-app   # Remover
 
-- **Arquivo**: `ecosystem.config.cjs`
-- **Porta**: 3000 (configurável via `PORT`)
-- **Modo**: Cluster
-- **Logs**: `logs/` (err.log, out.log, combined.log)
-- **Reinicialização**: Automática
-- **Memória**: Limite de 1GB
+# Logs e monitoramento
+pm2 logs myfonts-app     # Ver logs
+pm2 monit               # Monitoramento em tempo real
+```
 
-## 📁 Estrutura do Projeto
+## 📖 Como Usar
 
+### 1. **Configuração Inicial**
+- Digite o texto que deseja visualizar
+- Escolha entre "Pasta" ou "Sistema" para fonte das fontes
+
+### 2. **Controles de Visualização**
+- **Tamanho**: Ajuste o slider (8px - 280px)
+- **Alinhamento**: Escolha entre Esquerda, Centro, Direita
+- **Modo**: Grid (cards) ou Lista (linhas)
+
+### 3. **Fontes da Pasta**
+- Adicione arquivos de fonte na pasta `public/fonts`
+- Formatos suportados: `.woff2`, `.woff`, `.ttf`, `.otf`
+- Clique em "Recarregar" para detectar novas fontes
+
+### 4. **Fontes do Sistema**
+- **Peso da fonte**: Selecione normal, bold, ou valores de 100-900
+- **Categoria**: Filtre por serif, sans-serif, monospace, display, system
+- **Detecção automática** baseada no sistema operacional
+
+### 5. **Resultados**
+- Visualize o texto com todas as fontes disponíveis
+- Informações da fonte: nome, arquivo, categoria
+- Layout responsivo para diferentes tamanhos de tela
+
+## 🎛️ Controles de Visualização
+
+### **Controles Gerais**
+- ✅ **Tamanho da fonte**: 8px - 280px
+- ✅ **Alinhamento**: Esquerda, Centro, Direita
+- ✅ **Modo de visualização**: Grid ou Lista
+- ✅ **Fonte das fontes**: Pasta ou Sistema
+
+### **Controles para Fontes do Sistema**
+- ✅ **Peso da fonte**: normal, bold, 100-900
+- ✅ **Filtro por categoria**: serif, sans-serif, monospace, display, system
+
+### **Controles para Fontes da Pasta**
+- ✅ **Recarregamento**: Detecta novas fontes automaticamente
+- ✅ **Formatação**: Nomes de fonte formatados automaticamente
+
+## ⚙️ Configuração
+
+### **Variáveis de Ambiente**
+```bash
+PORT=3000                    # Porta do servidor
+NODE_ENV=production          # Ambiente (development/production)
+```
+
+### **Estrutura de Pastas**
 ```
 myFonts/
-├── src/
-│   ├── components/ui/     # Componentes Shadcn/ui
-│   │   ├── button.jsx
-│   │   ├── card.jsx
-│   │   ├── textarea.jsx
-│   │   ├── badge.jsx
-│   │   ├── toggle.jsx
-│   │   └── slider.jsx
-│   ├── lib/
-│   │   └── utils.js       # Utilitários (cn function)
-│   └── App.jsx           # Componente principal
 ├── public/
-│   └── fonts/            # Fontes disponíveis
-├── dist/                 # Build de produção
-├── logs/                 # Logs do PM2
-├── ecosystem.config.cjs  # Configuração PM2
-├── server.js            # Servidor de produção
-├── deploy.sh            # Script de deploy
-├── .nvmrc               # Versão do Node.js
-└── README.md            # Este arquivo
-```
-
-## 🎛️ Como Usar
-
-### 1. Selecionar Fonte das Fontes
-
-O sistema oferece duas opções para carregar fontes:
-
-#### **Fontes da Pasta** 📁
-```bash
-# Adicione arquivos de fonte na pasta public/fonts/
-cp MinhaFonte.woff2 public/fonts/
-
-# Formatos suportados: .woff2, .woff, .ttf, .otf
-```
-
-#### **Fontes do Sistema** 🖥️
-- **Carregamento dinâmico** com `font-list`
-- **Detecção automática** do sistema operacional
-- **Configurações específicas** por OS
-- **Categorização automática** das fontes
-
-**Sistemas suportados:**
-- **🍎 macOS**: SF Pro, Helvetica Neue, Times, etc.
-- **🪟 Windows**: Segoe UI, Calibri, Arial, etc.
-- **🐧 Linux**: Ubuntu, DejaVu Sans, Liberation Sans, etc.
-
-**Categorias de fontes:**
-- **System**: Fontes do sistema operacional
-- **Serif**: Fontes com serifas (Times, Georgia, etc.)
-- **Sans-Serif**: Fontes sem serifas (Arial, Helvetica, etc.)
-- **Monospace**: Fontes de largura fixa (Courier, etc.)
-- **Display**: Fontes decorativas (Impact, Comic Sans, etc.)
-
-### 2. Usar a Interface
-
-1. **Digite texto** no campo de entrada
-2. **Selecione a fonte das fontes**:
-   - **📁 Pasta**: Fontes da pasta `public/fonts`
-   - **🖥️ Sistema**: Fontes web seguras
-3. **Clique em "Aplicar Fontes"**
-4. **Ajuste os controles**:
-   - **Tamanho**: Slider de 8px a 280px
-   - **Alinhamento**: Esquerda, Centro, Direita
-   - **Visualização**: Grid ou Lista
-5. **Visualize** o resultado em tempo real
-
-### 3. Controles de Visualização
-
-#### Tamanho da Fonte
-- **Range**: 8px a 280px
-- **Controle**: Slider interativo
-- **Feedback**: Valor em tempo real
-
-#### Alinhamento de Texto
-- **Esquerda**: Para textos longos e leitura
-- **Centro**: Para títulos e destaque
-- **Direita**: Para layouts especiais
-
-#### Modo de Visualização
-- **Grid**: Cards compactos (3 colunas)
-- **Lista**: Layout horizontal detalhado
-
-## 🔧 Configuração
-
-### Variáveis de Ambiente
-
-```bash
-NODE_ENV=production    # Modo de execução
-PORT=3000             # Porta do servidor
-```
-
-### Fontes Suportadas
-
-#### **Fontes da Pasta** 📁
-- **Formatos**: .woff2, .woff, .ttf, .otf
-- **Carregamento**: Dinâmico via API `/api/fonts`
-- **Detecção**: Automática na pasta `public/fonts`
-
-#### **Fontes do Sistema** 🖥️
-- **Carregamento dinâmico** com `font-list`
-- **Detecção automática** do sistema operacional
-- **Configurações específicas** por OS (macOS, Windows, Linux)
-- **Categorização automática** (System, Serif, Sans-Serif, Monospace, Display)
-- **Fallback inteligente** para fontes similares
-- **Limite de 50 fontes** para performance
-
-### API Endpoints
-
-```bash
-GET /api/fonts        # Lista todas as fontes disponíveis
-GET /fonts/*          # Serve arquivos de fonte
-GET /*                # Serve aplicação React (SPA)
+│   └── fonts/              # Fontes customizadas
+├── src/
+│   ├── components/ui/      # Componentes Shadcn/ui
+│   ├── App.jsx            # Componente principal
+│   └── index.css          # Estilos globais
+├── server.js              # Servidor Node.js
+├── ecosystem.config.cjs   # Configuração PM2
+└── package.json           # Dependências e scripts
 ```
 
 ## 📊 Monitoramento
 
-### PM2 Dashboard
-
-```bash
-pm2 monit          # Interface gráfica
-pm2 status         # Status das aplicações
-pm2 logs           # Logs em tempo real
-pm2 show myfonts-app # Informações detalhadas
-```
-
-### Métricas Disponíveis
-
-- **CPU**: Uso de processador
-- **Memory**: Uso de memória
-- **Uptime**: Tempo online
-- **Restarts**: Número de reinicializações
-- **Logs**: Erro, saída e combinados
-
-### Logs
-
+### **Logs**
 ```bash
 # Ver logs em tempo real
-npm run prod:logs
+pm2 logs myfonts-app
 
 # Ver logs de erro
 pm2 logs myfonts-app --err
 
 # Ver logs de saída
 pm2 logs myfonts-app --out
+```
 
-# Limpar logs
-pm2 flush
+### **Status**
+```bash
+# Status da aplicação
+pm2 status
+
+# Informações detalhadas
+pm2 show myfonts-app
+
+# Monitoramento em tempo real
+pm2 monit
 ```
 
 ## 🌐 Acesso
 
-### URLs
+### **URLs da Aplicação**
+- **Desenvolvimento**: http://localhost:5173
+- **Produção**: http://localhost:3000
 
-- **Local**: http://localhost:3000
-- **Externo**: http://seu-ip:3000
-- **API**: http://localhost:3000/api/fonts
+### **APIs Disponíveis**
+- **Fontes da pasta**: `GET /api/fonts`
+- **Fontes do sistema**: `GET /api/system-fonts`
+- **Arquivos estáticos**: `GET /` (HTML, CSS, JS)
 
-### Rede
+## 📝 Scripts Disponíveis
 
+### **Desenvolvimento**
 ```bash
-# Verificar se a porta está livre
-lsof -i :3000
-
-# Liberar porta se necessário
-lsof -ti:3000 | xargs kill -9
+npm run dev          # Servidor de desenvolvimento
+npm run build        # Build para produção
+npm run preview      # Preview da build
 ```
 
-## 🛠️ Scripts Disponíveis
-
+### **Produção (PM2)**
 ```bash
-# Setup e Desenvolvimento
-npm run setup        # Setup inicial com NVM
-npm run dev          # Desenvolvimento
-npm run build        # Build para produção
-npm run preview      # Preview local
-npm run lint         # Linting
-
-# Produção
-npm run prod:build   # Build otimizado
-npm run prod:start   # Iniciar PM2
+npm run prod:start   # Iniciar com PM2
 npm run prod:stop    # Parar PM2
 npm run prod:restart # Reiniciar PM2
-npm run prod:reload  # Reload zero-downtime
 npm run prod:logs    # Ver logs
-npm run prod:monit   # Monitorar
-npm run prod:delete  # Deletar do PM2
+npm run prod:monit   # Monitoramento
 ```
 
 ## 🔒 Segurança
 
-### Recomendações
+### **Configurações de Segurança**
+- CORS configurado para permitir acesso local
+- Headers de segurança básicos
+- Validação de tipos de arquivo para fontes
+- Buffer limits para comandos do sistema
 
-1. **Firewall**: Configurar firewall para porta 3000
-2. **HTTPS**: Usar proxy reverso com SSL (Nginx/Apache)
-3. **Logs**: Monitorar logs regularmente
-4. **Updates**: Manter dependências atualizadas
-5. **Permissões**: Configurar permissões adequadas
+### **Recomendações**
+- Use HTTPS em produção
+- Configure firewall adequadamente
+- Monitore logs regularmente
+- Mantenha dependências atualizadas
 
-### Proxy Reverso (Nginx)
+## ⚡ Performance
 
-```nginx
-server {
-    listen 80;
-    server_name seu-dominio.com;
-    
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
+### **Otimizações Implementadas**
+- **Build otimizado**: Minificação e compressão
+- **Lazy loading**: Carregamento sob demanda
+- **Cache**: Headers de cache para assets estáticos
+- **Limitação**: Máximo 100 fontes do sistema para performance
 
-## 📈 Performance
-
-### Otimizações
-
-- **Build otimizado** com Vite
-- **Code splitting** automático
-- **Minificação** em produção
-- **Gzip** habilitado
-- **Cache** de assets
-- **Tree shaking** para reduzir bundle
-
-### Métricas
-
-- **Bundle size**: ~250KB (gzipped)
-- **Load time**: <2s
-- **Memory usage**: ~65MB
-- **CPU usage**: <1%
+### **Métricas**
+- **Tempo de carregamento**: < 2s
+- **Tamanho do bundle**: ~220KB (gzipped)
+- **Fontes carregadas**: Até 100 do sistema + ilimitadas da pasta
 
 ## 🐛 Troubleshooting
 
-### Problemas Comuns
+### **Problemas Comuns**
 
-1. **Porta em uso**:
-   ```bash
-   lsof -i :3000
-   lsof -ti:3000 | xargs kill -9
-   ```
-
-2. **PM2 não inicia**:
-   ```bash
-   pm2 delete myfonts-app
-   pm2 flush
-   npm run prod:start
-   ```
-
-3. **Fontes não carregam**:
-   ```bash
-   # Verificar pasta de fontes
-   ls -la public/fonts/
-   
-   # Verificar API
-   curl http://localhost:3000/api/fonts
-   ```
-
-4. **Build falha**:
-   ```bash
-   rm -rf dist/
-   npm install
-   npm run build
-   ```
-
-### Reinicialização Completa
-
+#### **Fontes não carregam**
 ```bash
-# Parar e deletar
-npm run prod:delete
+# Verificar pasta de fontes
+ls -la public/fonts/
 
-# Limpar cache
-pm2 flush
-
-# Reinstalar dependências
-npm install
-
-# Rebuild
-npm run prod:build
-
-# Reiniciar
-npm run prod:start
+# Verificar logs do servidor
+pm2 logs myfonts-app
 ```
 
-## 📝 Tecnologias
+#### **Erro de porta em uso**
+```bash
+# Encontrar processo usando a porta
+lsof -ti:3000
 
-### Frontend
-- **React 18**: Framework JavaScript
-- **Vite**: Build tool rápido
-- **Shadcn/ui**: Componentes modernos
+# Matar processo
+kill -9 <PID>
+```
+
+#### **PM2 não inicia**
+```bash
+# Verificar configuração
+pm2 show myfonts-app
+
+# Reiniciar PM2
+pm2 kill && pm2 start ecosystem.config.cjs
+```
+
+### **Logs de Debug**
+```bash
+# Logs detalhados
+pm2 logs myfonts-app --lines 50
+
+# Logs de erro
+pm2 logs myfonts-app --err --lines 20
+```
+
+## 🛠️ Tecnologias
+
+### **Frontend**
+- **React 18**: Biblioteca de UI
+- **Vite**: Build tool e dev server
 - **Tailwind CSS**: Framework CSS
+- **Shadcn/ui**: Componentes UI
 - **Lucide React**: Ícones
 
-### Backend
+### **Backend**
 - **Node.js**: Runtime JavaScript
-- **Express**: Framework web (desenvolvimento)
-- **HTTP Server**: Servidor nativo (produção)
-- **font-list**: Carregamento dinâmico de fontes do sistema
+- **HTTP Server**: Servidor nativo
+- **PM2**: Process manager
+- **Font Detection**: Comandos nativos do sistema
 
-### Deploy
-- **PM2**: Gerenciador de processos
-- **NVM**: Gerenciador de versões Node.js
+### **Ferramentas**
+- **NVM**: Gerenciamento de versões Node.js
+- **npm**: Gerenciador de pacotes
+- **Git**: Controle de versão
 
 ## 📄 Licença
 
-Este projeto é de código aberto e pode ser usado livremente para fins educacionais e comerciais.
+Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
+
+## 🤝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+## 📞 Suporte
+
+Para suporte, abra uma issue no repositório ou entre em contato através dos canais oficiais.
 
 ---
 
-**🎯 Sistema completo para visualização de fontes em produção!**
+**Desenvolvido com ❤️ usando React, Vite e Node.js**
