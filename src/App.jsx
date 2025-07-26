@@ -19,8 +19,8 @@ function App() {
   const [fontSource, setFontSource] = useState('folder') // 'folder' or 'system'
   const [systemInfo, setSystemInfo] = useState(null)
   const [fontCategories, setFontCategories] = useState({})
-  const [fontWeight, setFontWeight] = useState('normal') // Novo estado para font-weight
   const [selectedCategory, setSelectedCategory] = useState('all') // Novo estado para categoria selecionada
+  const [selectedWeight, setSelectedWeight] = useState('all') // Novo estado para peso selecionado
 
   // Função para carregar uma fonte dinamicamente
   const loadFontFace = (fontName, fontPath) => {
@@ -104,6 +104,7 @@ function App() {
     setFonts([])
     setFontCategories({})
     setSelectedCategory('all')
+    setSelectedWeight('all') // Resetar peso ao mudar fonte
     
     if (fontSource === 'folder') {
       loadFontsFromFolder()
@@ -136,6 +137,74 @@ function App() {
     
     setSystemInfo(osConfig)
   }, [])
+
+  // Função para detectar peso da fonte baseado no nome
+  const getFontWeight = (fontName) => {
+    const name = fontName.toLowerCase()
+    
+    // Detecção por palavras-chave específicas
+    if (name.includes('thin') || name.includes('100')) {
+      return 'thin'
+    } else if (name.includes('extra light') || name.includes('ultra light') || name.includes('200')) {
+      return 'extraLight'
+    } else if (name.includes('light') || name.includes('300')) {
+      return 'light'
+    } else if (name.includes('regular') || name.includes('normal') || name.includes('400')) {
+      return 'regular'
+    } else if (name.includes('medium') || name.includes('500')) {
+      return 'medium'
+    } else if (name.includes('semi bold') || name.includes('semibold') || name.includes('demi bold') || name.includes('600')) {
+      return 'semiBold'
+    } else if (name.includes('bold') || name.includes('700')) {
+      return 'bold'
+    } else if (name.includes('extra bold') || name.includes('ultra bold') || name.includes('800')) {
+      return 'extraBold'
+    } else if (name.includes('black') || name.includes('heavy') || name.includes('900')) {
+      return 'black'
+    }
+    
+    // Se não encontrar nenhum peso específico, assume regular
+    return 'regular'
+  }
+
+  // Função para obter pesos únicos das fontes
+  const getUniqueWeights = () => {
+    const weights = [...new Set(fonts.map(font => getFontWeight(font.name)))]
+    return weights.sort()
+  }
+
+  // Função para obter nome amigável do peso
+  const getWeightDisplayName = (weight) => {
+    const weightNames = {
+      'thin': 'Thin (100)',
+      'extraLight': 'Extra Light (200)',
+      'light': 'Light (300)',
+      'regular': 'Regular (400)',
+      'medium': 'Medium (500)',
+      'semiBold': 'Semi Bold (600)',
+      'bold': 'Bold (700)',
+      'extraBold': 'Extra Bold (800)',
+      'black': 'Black (900)'
+    }
+    return weightNames[weight] || weight
+  }
+
+  // Função para filtrar fontes por categoria e peso
+  const getFilteredFonts = () => {
+    let filtered = fonts
+    
+    // Filtrar por categoria
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(font => font.category === selectedCategory)
+    }
+    
+    // Filtrar por peso
+    if (selectedWeight !== 'all') {
+      filtered = filtered.filter(font => getFontWeight(font.name) === selectedWeight)
+    }
+    
+    return filtered
+  }
 
   const applyFonts = () => {
     if (!text.trim()) {
@@ -174,14 +243,6 @@ function App() {
   const getUniqueCategories = () => {
     const categories = [...new Set(fonts.map(font => font.category).filter(Boolean))]
     return categories.sort()
-  }
-
-  // Função para filtrar fontes por categoria
-  const getFilteredFonts = () => {
-    if (selectedCategory === 'all') {
-      return fonts
-    }
-    return fonts.filter(font => font.category === selectedCategory)
   }
 
   return (
@@ -374,30 +435,6 @@ function App() {
               {fontSource === 'system' && (
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Peso da Fonte:
-                  </label>
-                  <select
-                    className="w-full rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
-                    value={fontWeight}
-                    onChange={e => setFontWeight(e.target.value)}
-                  >
-                    <option value="normal">Normal</option>
-                    <option value="bold">Bold</option>
-                    <option value="100">100 (Thin)</option>
-                    <option value="200">200 (Extra Light)</option>
-                    <option value="300">300 (Light)</option>
-                    <option value="400">400 (Normal)</option>
-                    <option value="500">500 (Medium)</option>
-                    <option value="600">600 (Semi Bold)</option>
-                    <option value="700">700 (Bold)</option>
-                    <option value="800">800 (Extra Bold)</option>
-                    <option value="900">900 (Black)</option>
-                  </select>
-                </div>
-              )}
-              {fontSource === 'system' && (
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Categoria da Fonte:
                   </label>
                   <select
@@ -411,6 +448,30 @@ function App() {
                       return (
                         <option key={category} value={category}>
                           {category} ({count})
+                        </option>
+                      )
+                    })}
+                  </select>
+                </div>
+              )}
+
+              {/* Peso da Fonte - Mostrar apenas quando há fontes carregadas */}
+              {fonts.length > 0 && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Peso da Fonte:
+                  </label>
+                  <select
+                    className="w-full rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                    value={selectedWeight}
+                    onChange={e => setSelectedWeight(e.target.value)}
+                  >
+                    <option value="all">Todos os Pesos ({getFilteredFonts().length})</option>
+                    {getUniqueWeights().map(weight => {
+                      const count = fonts.filter(font => getFontWeight(font.name) === weight).length
+                      return (
+                        <option key={weight} value={weight}>
+                          {getWeightDisplayName(weight)} ({count})
                         </option>
                       )
                     })}
@@ -467,7 +528,6 @@ function App() {
                                 fontFamily: `'${font.name}', sans-serif`,
                                 fontSize: `${fontSize}px`,
                                 textAlign: textAlign,
-                                fontWeight: fontSource === 'system' ? fontWeight : undefined
                               }}
                             >
                               {text}
@@ -478,9 +538,6 @@ function App() {
                               </Badge>
                               <div className="text-xs text-gray-500 dark:text-gray-400 text-center font-mono bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded">
                                 {font.file}
-                              </div>
-                              <div className="text-xs text-blue-600 dark:text-blue-400 text-center">
-                                {font.type === 'folder' ? '📁 Pasta' : `${systemInfo?.icon || '🖥️'} ${font.category || 'Sistema'}`}
                               </div>
                             </div>
                           </CardContent>
@@ -500,7 +557,6 @@ function App() {
                                     fontFamily: `'${font.name}', sans-serif`,
                                     fontSize: `${fontSize}px`,
                                     textAlign: textAlign,
-                                    fontWeight: fontSource === 'system' ? fontWeight : undefined
                                   }}
                                 >
                                   {text}
@@ -512,9 +568,6 @@ function App() {
                                 </Badge>
                                 <div className="text-xs text-gray-500 dark:text-gray-400 text-center font-mono bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded">
                                   {font.file}
-                                </div>
-                                <div className="text-xs text-blue-600 dark:text-blue-400 text-center">
-                                  {font.type === 'folder' ? '📁 Pasta' : `${systemInfo?.icon || '🖥️'} ${font.category || 'Sistema'}`}
                                 </div>
                               </div>
                             </div>
